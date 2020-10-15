@@ -1,9 +1,10 @@
 import "package:flutter/material.dart";
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import '../services/networking.dart';
 
-final _fireStore = Firestore.instance;
+import 'package:vision_h_plus/screens/PatientData.dart';
+
 FirebaseUser loggedInUser;
 
 class HomeScreen extends StatefulWidget {
@@ -19,6 +20,20 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     getCurrentUser();
+    getMyPatients();
+  }
+
+  var patients = [];
+
+  Future<dynamic> getMyPatients() async {
+    var url = 'http://localhost:8080/my-patients/abc';
+    NetworkHelper networkHelper = NetworkHelper(url);
+    var patientData = await networkHelper.getData();
+    print(patientData['payload']['patients']);
+    setState(() {
+      patients = patientData['payload']['patients'];
+    });
+    return patientData['payload']['patients'];
   }
 
   void getCurrentUser() async {
@@ -32,6 +47,8 @@ class _HomeScreenState extends State<HomeScreen> {
       print(e);
     }
   }
+
+  List filteredUsers = List();
 
   @override
   Widget build(BuildContext context) {
@@ -88,66 +105,59 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
-                  onChanged: (value) {
-                    search = value;
+                  onChanged: (string) {
+                    setState(() {
+                      filteredUsers = patients.where((u) {
+                        print(u);
+                        return u["name"]
+                            .toLowerCase()
+                            .contains(string.toLowerCase());
+                      }).toList();
+                    });
                   },
                 ),
                 SizedBox(
                   height: 20,
                 ),
                 Expanded(
-                    child: StreamBuilder<QuerySnapshot>(
-                        stream: _fireStore
-                            .collection('patients')
-                            .where('doctor_id', isEqualTo: "abc")
-                            .snapshots(),
-                        builder: (BuildContext context,
-                            AsyncSnapshot<QuerySnapshot> snapshot) {
-                          if (!snapshot.hasData)
-                            return new Text('Loading...',
-                                style: TextStyle(color: Colors.white));
-                          return ListView.builder(
-                              itemCount: snapshot.data.documents.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                //sort my data by timestamp before building
-                                return Card(
-                                  child: InkWell(
-                                    splashColor:
-                                        Colors.blueAccent.withAlpha(30),
-                                    onTap: () {
-                                      print('Card tapped.');
-                                    },
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(10.0),
-                                      child: Container(
-                                        child: Padding(
-                                          padding: const EdgeInsets.only(
-                                              top: 10, bottom: 10),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: <Widget>[
-                                              Text(
-                                                snapshot.data.documents[index]
-                                                    ['name'],
-                                                style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 24),
-                                              ),
-                                              Text(
-                                                "Age: ${snapshot.data.documents[index]['age']}",
-                                                style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 20),
-                                              ),
-                                            ],
-                                          ),
+                    child: ListView.builder(
+                        itemCount: filteredUsers.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Card(
+                            child: InkWell(
+                              splashColor: Colors.blueAccent.withAlpha(30),
+                              onTap: () {
+                                print('Card tapped.');
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: Container(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                        top: 10, bottom: 10),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        Text(
+                                          filteredUsers[index]['name'],
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 24),
                                         ),
-                                      ),
+                                        Text(
+                                          "Age: ${filteredUsers[index]['age']}",
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 20),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                );
-                              });
+                                ),
+                              ),
+                            ),
+                          );
                         }))
               ],
             ),
