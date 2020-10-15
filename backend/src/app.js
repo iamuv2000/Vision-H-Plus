@@ -108,6 +108,29 @@ app.post('/create', async (req, res) => {
 })
 
 
+// MY PATIENTS
+app.get('/my-patients/:id' , async(req,res) => {
+
+	const patientRef = database.collection('patients').where('doctor_id' , '==' , req.params.id)
+	let snapshot = await patientRef.get();
+
+	let patients = [];
+
+	snapshot.forEach((doc) => {
+		patients.push(doc.data());
+	})
+
+	console.log(patients)
+
+	res.status(200)
+		.send({
+			statusCode: 200,
+			payload: {
+				patients
+			},})
+
+})
+
 // OPEN PORT
 app.listen(port, () => {
 	console.log('Server is up on port ', port)
