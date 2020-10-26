@@ -131,6 +131,26 @@ app.get('/my-patients/:id' , async(req,res) => {
 
 })
 
+
+app.post('/update-limit',async (req,res) => {
+	console.log(req.body)
+
+	// GENERATING KEY
+	high_key = 'high_'+req.body.parameter.replace(' ' , '_').toLowerCase()
+	low_key = 'low_'+req.body.parameter.replace(' ' , '_').toLowerCase()
+
+	console.log(high_key)
+	console.log(low_key)
+
+	let obj = {}
+	obj[high_key] = req.body.high;
+	obj[low_key] = req.body.low;
+
+	// Update
+	await database.collection('patients').doc(req.body.id).update(obj)
+	res.send({success:true})
+})
+
 // OPEN PORT
 app.listen(port, () => {
 	console.log('Server is up on port ', port)
