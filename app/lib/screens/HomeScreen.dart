@@ -53,7 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor: Colors.blue, //or set color with: Color(0xFF0000FF)
+      statusBarColor: Colors.red, //or set color with: Color(0xFF0000FF)
     ));
     return Scaffold(
       resizeToAvoidBottomPadding: false,
@@ -120,50 +120,51 @@ class _HomeScreenState extends State<HomeScreen> {
                   height: 20,
                 ),
                 Expanded(
-                    child: ListView.builder(
-                        itemCount: filteredUsers.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Card(
-                            child: InkWell(
-                              splashColor: Colors.blueAccent.withAlpha(30),
-                              onTap: () {
-                                print('Card tapped.');
-                                Navigator.push(context,
-                                    MaterialPageRoute(builder: (context) {
-                                  return PatientData(
-                                      patient: filteredUsers[index]);
-                                }));
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: Container(
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 10, bottom: 10),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: <Widget>[
-                                        Text(
-                                          filteredUsers[index]['name'],
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 24),
-                                        ),
-                                        Text(
-                                          "Age: ${filteredUsers[index]['age']}",
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 20),
-                                        ),
-                                      ],
-                                    ),
+                    child: RefreshIndicator(
+                  onRefresh: getMyPatients,
+                  child: ListView.builder(
+                      itemCount: filteredUsers.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return Card(
+                          child: InkWell(
+                            splashColor: Colors.blueAccent.withAlpha(30),
+                            onTap: () {
+                              print('Card tapped.');
+                              Navigator.push(context,
+                                  MaterialPageRoute(builder: (context) {
+                                return PatientData(
+                                    patient: filteredUsers[index]);
+                              }));
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Container(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 10, bottom: 10),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: <Widget>[
+                                      Text(
+                                        filteredUsers[index]['name'],
+                                        style: TextStyle(
+                                            color: Colors.black, fontSize: 24),
+                                      ),
+                                      Text(
+                                        "Age: ${filteredUsers[index]['age']}",
+                                        style: TextStyle(
+                                            color: Colors.black, fontSize: 20),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ),
                             ),
-                          );
-                        }))
+                          ),
+                        );
+                      }),
+                ))
               ],
             ),
           ),

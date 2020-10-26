@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 
 class PatientData extends StatefulWidget {
   PatientData({this.patient});
@@ -9,6 +10,26 @@ class PatientData extends StatefulWidget {
 }
 
 class _PatientDataState extends State<PatientData> {
+  int selectedValue = 0;
+  String textOfValue = 'Blood Pressure';
+
+  String upperValue = '';
+  String lowerValue = '';
+
+  List<Widget> options = [
+    Text('Blood Pressure'),
+    Text('Heart Rate'),
+    Text('Respiration'),
+    Text('Temperature')
+  ];
+
+  List<String> optionsText = [
+    'Blood Pressure',
+    'Heart Rate',
+    'Respiration',
+    'Temperature'
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,8 +72,7 @@ class _PatientDataState extends State<PatientData> {
                   ),
                 ),
               ),
-              Flexible(
-                fit: FlexFit.tight,
+              Expanded(
                 child: StreamBuilder<QuerySnapshot>(
                   stream: Firestore.instance
                       .collection('patients')
@@ -113,12 +133,18 @@ class _PatientDataState extends State<PatientData> {
                                                 fontSize: 24,
                                                 fontWeight: FontWeight.w600),
                                           ),
-                                          Text(
-                                            doc['heartrate'],
-                                            style: TextStyle(
+                                          Text(doc['heartrate'],
+                                              style: TextStyle(
                                                 fontSize: 24,
-                                                fontWeight: FontWeight.w600),
-                                          ),
+                                                fontWeight: FontWeight.w600,
+                                                color: (int.parse(widget
+                                                                .patient[
+                                                            'high_heart_rate']) <
+                                                        int.parse(
+                                                            doc['heartrate']))
+                                                    ? Colors.red
+                                                    : Colors.black,
+                                              )),
                                           Icon(
                                             Icons.favorite,
                                             color: Colors.red,
@@ -189,6 +215,153 @@ class _PatientDataState extends State<PatientData> {
                   },
                 ),
               ),
+              Container(
+                  child: RaisedButton(
+                    onPressed: () async {
+                      print("Set Limits pressed");
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        builder: (context) => SingleChildScrollView(
+                          child: Container(
+                            padding: EdgeInsets.only(
+                                bottom:
+                                    MediaQuery.of(context).viewInsets.bottom),
+                            child: Container(
+                              height: MediaQuery.of(context).size.height * 0.35,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  children: <Widget>[
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        Text('Select Parameter: ',
+                                            style: TextStyle(fontSize: 24)),
+                                        FlatButton(
+                                          child: Text(textOfValue,
+                                              style: TextStyle(fontSize: 24)),
+                                          onPressed: () {
+                                            Navigator.push(context,
+                                                MaterialPageRoute(
+                                                    builder: (context) {
+                                              return CupertinoPicker(
+                                                backgroundColor: Colors.white,
+                                                onSelectedItemChanged: (value) {
+                                                  setState(() {
+                                                    selectedValue = value;
+                                                    textOfValue =
+                                                        optionsText[value];
+                                                  });
+                                                },
+                                                itemExtent: 32.0,
+                                                children: options,
+                                              );
+                                            }));
+                                          },
+                                        )
+                                      ],
+                                    ),
+                                    TextFormField(
+                                      style: TextStyle(
+                                          color: Colors.black, fontSize: 22),
+                                      decoration: InputDecoration(
+                                        labelText: 'Upper Limit',
+                                        labelStyle: TextStyle(
+                                            color: Colors.black, fontSize: 24),
+                                        filled: true,
+                                        fillColor: Colors.white,
+                                        focusColor: Colors.black,
+                                        hoverColor: Colors.black,
+                                        focusedBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10.0),
+                                          borderSide: BorderSide(
+                                            color: Colors.blue,
+                                          ),
+                                        ),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10.0),
+                                          borderSide: BorderSide(
+                                            color: Colors.redAccent,
+                                            width: 1.2,
+                                          ),
+                                        ),
+                                      ),
+                                      onChanged: (value) {
+                                        upperValue = value;
+                                      },
+                                    ),
+                                    SizedBox(
+                                      height: 20,
+                                    ),
+                                    TextFormField(
+                                      style: TextStyle(
+                                          color: Colors.black, fontSize: 22),
+                                      decoration: InputDecoration(
+                                        labelText: 'Lower Limit',
+                                        labelStyle: TextStyle(
+                                            color: Colors.black, fontSize: 24),
+                                        filled: true,
+                                        fillColor: Colors.white,
+                                        focusColor: Colors.black,
+                                        hoverColor: Colors.black,
+                                        focusedBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10.0),
+                                          borderSide: BorderSide(
+                                            color: Colors.blue,
+                                          ),
+                                        ),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10.0),
+                                          borderSide: BorderSide(
+                                            color: Colors.redAccent,
+                                            width: 1.2,
+                                          ),
+                                        ),
+                                      ),
+                                      onChanged: (value) {
+                                        lowerValue = value;
+                                      },
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    FlatButton(
+                                        child: Text('Submit',
+                                            style: TextStyle(
+                                                fontSize: 24,
+                                                color: Colors.blue)),
+                                        onPressed: () {}),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                    color: Colors.red,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18.0),
+                        side: BorderSide(color: Colors.red)),
+                    child: Center(
+                      child: Text(
+                        'Set Alerts',
+                        style: TextStyle(
+                            fontSize: 25.0,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white),
+                      ),
+                    ),
+                  ),
+                  margin: EdgeInsets.only(top: 10.0),
+                  width: double.infinity,
+                  height: 70.0)
             ],
           ),
         ),
