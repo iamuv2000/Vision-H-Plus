@@ -128,6 +128,11 @@ class _HomeScreenState extends State<HomeScreen> {
                               splashColor: Colors.blueAccent.withAlpha(30),
                               onTap: () {
                                 print('Card tapped.');
+                                Navigator.push(context,
+                                    MaterialPageRoute(builder: (context) {
+                                  return PatientData(
+                                      patient: filteredUsers[index]);
+                                }));
                               },
                               child: Padding(
                                 padding: const EdgeInsets.all(10.0),
