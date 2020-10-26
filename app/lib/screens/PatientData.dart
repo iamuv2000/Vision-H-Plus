@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:url_launcher/url_launcher.dart';
 
 class PatientData extends StatefulWidget {
   PatientData({this.patient});
-  var patient;
+  final patient;
   @override
   _PatientDataState createState() => _PatientDataState();
 }
@@ -68,6 +71,27 @@ class _PatientDataState extends State<PatientData> {
                       ),
                       Text('Gender: ${widget.patient['gender']}',
                           style: TextStyle(color: Colors.white, fontSize: 20)),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text(
+                            'Nurse: ${widget.patient['nurse_assigned']}',
+                            style: TextStyle(color: Colors.white, fontSize: 20),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 10.0),
+                            child: GestureDetector(
+                                onTap: () {
+                                  print("Calling nurse...");
+                                  _popupDialog(context);
+                                },
+                                child: Icon(Icons.phone, color: Colors.red)),
+                          )
+                        ],
+                      )
                     ],
                   ),
                 ),
@@ -169,7 +193,14 @@ class _PatientDataState extends State<PatientData> {
                                             doc['respiration'],
                                             style: TextStyle(
                                                 fontSize: 24,
-                                                fontWeight: FontWeight.w600),
+                                                fontWeight: FontWeight.w600,
+                                                color: (int.parse(widget
+                                                                .patient[
+                                                            'high_respiration']) <
+                                                        int.parse(
+                                                            doc['respiration']))
+                                                    ? Colors.red
+                                                    : Colors.black),
                                           ),
                                           Icon(
                                             Icons.compare_arrows,
@@ -195,7 +226,14 @@ class _PatientDataState extends State<PatientData> {
                                             doc['temperature'],
                                             style: TextStyle(
                                                 fontSize: 24,
-                                                fontWeight: FontWeight.w600),
+                                                fontWeight: FontWeight.w600,
+                                                color: (int.parse(widget
+                                                                .patient[
+                                                            'high_temperature']) <
+                                                        int.parse(
+                                                            doc['temperature']))
+                                                    ? Colors.red
+                                                    : Colors.black),
                                           ),
                                           Icon(
                                             Icons.gradient,
@@ -336,7 +374,23 @@ class _PatientDataState extends State<PatientData> {
                                             style: TextStyle(
                                                 fontSize: 24,
                                                 color: Colors.blue)),
-                                        onPressed: () {}),
+                                        onPressed: () async {
+                                          Map data = {
+                                            'parameter': textOfValue,
+                                            'high': upperValue,
+                                            'low': lowerValue,
+                                            'id': widget.patient['patient_id']
+                                          };
+
+                                          String body = json.encode(data);
+                                          await http.post(
+                                            'http://localhost:8080/update-limit',
+                                            headers: {
+                                              "Content-Type": "application/json"
+                                            },
+                                            body: body,
+                                          );
+                                        }),
                                   ],
                                 ),
                               ),
@@ -368,4 +422,28 @@ class _PatientDataState extends State<PatientData> {
       ),
     );
   }
+}
+
+void _popupDialog(BuildContext context) {
+  showDialog(
+      context: context,
+      builder: (BuildContext context) => CupertinoAlertDialog(
+            title:
+                Text("Calling Nurse Alia...", style: TextStyle(fontSize: 22)),
+            content: Text("+91 9011029205",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500)),
+            actions: <Widget>[
+              CupertinoDialogAction(
+                isDefaultAction: true,
+                onPressed: () => launch("tel://+919011029205"),
+                child: Text("Call", style: TextStyle(color: Colors.blueAccent)),
+              ),
+              CupertinoDialogAction(
+                isDefaultAction: true,
+                onPressed: () => Navigator.pop(context),
+                child:
+                    Text("Cancel", style: TextStyle(color: Colors.blueAccent)),
+              )
+            ],
+          ));
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import './screens/HomeScreen.dart';
+import 'package:vision_h_plus/screens/SignInScreen.dart';
+import './screens/SignInScreen.dart';
 
 void main() {
   runApp(MyApp());
@@ -19,7 +20,7 @@ class MyApp extends StatelessWidget {
           body: SafeArea(
             child: Padding(
                 padding: const EdgeInsets.only(bottom: 5.0),
-                child: HomeScreen()),
+                child: SignInScreen()),
           ),
         ),
       ),

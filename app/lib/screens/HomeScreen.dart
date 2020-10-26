@@ -32,6 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
     print(patientData['payload']['patients']);
     setState(() {
       patients = patientData['payload']['patients'];
+      filteredUsers = patients;
     });
     return patientData['payload']['patients'];
   }
@@ -57,7 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
     ));
     return Scaffold(
       resizeToAvoidBottomPadding: false,
-      backgroundColor: Colors.red,
+      backgroundColor: Colors.black,
       appBar: AppBar(
         elevation: 4.0,
         title: Text(

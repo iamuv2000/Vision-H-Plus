@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'HomeScreen.dart';
 
 class SignInScreen extends StatefulWidget {
   @override
@@ -114,6 +115,10 @@ class _SignInScreenState extends State<SignInScreen> {
                             error = "";
                           });
                           print("User has been logged in");
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) {
+                            return HomeScreen();
+                          }));
                         }
                       } catch (e) {
                         print(e.message);
