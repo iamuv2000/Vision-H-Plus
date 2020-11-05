@@ -26,9 +26,17 @@ Vision H+ is an ICU monitoring system which allows the doctor to monitor their p
 
 <br />
 
+<img src="./assets/uml.png">
 
+## Application
+<div style="display:flex;">
+	<img src="./assets/patient_list.png" >
+	<img src="./assets/patient_view.png">
+</div>
 
-Technologies used:
+<br/>
+
+## Technologies used:
 1. Flutter
 2. Nodejs
 3. Expressjs
