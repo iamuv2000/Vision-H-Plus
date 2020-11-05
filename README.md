@@ -18,11 +18,14 @@
 <p>
 Vision H+ is an ICU monitoring system which allows the doctor to monitor their patients anywhere, anytime saving them multiple trips (and a lot of time) to the ICU to check and ensure that the patient is doing well. The system consists of a Mobile application, through which the doctor can monitor the ICU System and set alerts if any of the health vitals go out of range. The second part of the system is an embedded device consisting of a camera, OCR, a local SQL database which processes the ICU monitor information, and sends the alerts and real time vital levels to the doctor’s application. 
 </p>
-<div align="center">
-
+<div>
+# Important links
 <a href="https://drive.google.com/file/d/1jnZCi_zBlUBf9BmtrLn3KmtlFmQQPFCX/view?usp=sharing">Video Demonstration </a>
+<br/>
 <a href="https://drive.google.com/file/d/1Znk7FhfKjEV7i4PGb_sfiUhkKvs5PjNV/view?usp=sharing">PPT</a>
+<br/>
 <a href="https://drive.google.com/file/d/1oTJrOCzUjFj2bUFBmWh-Hv8jLVGIF6ct/view?usp=sharing">Documentation</a>
+<br/>
 
 </div>
 </p>
