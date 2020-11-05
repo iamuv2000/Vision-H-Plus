@@ -29,8 +29,8 @@ Vision H+ is an ICU monitoring system which allows the doctor to monitor their p
 <img src="./assets/uml.png">
 
 ## Application
-<img src="./assets/patient_list.png" width:100% height:auto>
-<img src="./assets/patient_view.png">
+<img src="./assets/patient_list.png" width="60%" height="auto">
+<img src="./assets/patient_view.png" width="60%" height="auto">
 
 <br/>
 
